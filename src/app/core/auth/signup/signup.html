@@ -1,0 +1,364 @@
+<main class="min-h-screen flex items-center justify-center p-4 sm:p-6 lg:p-10">
+  <section
+    class="w-full max-w-5xl bg-white rounded-3xl shadow-xl grid lg:grid-cols-[1.2fr_1fr] gap-5 p-4 sm:p-5"
+  >
+    <!-- ========== Form Side ========== -->
+    <div class="flex flex-col justify-center px-2 py-2 sm:px-6 lg:px-8">
+      <h1 class="text-2xl font-bold text-primary-dark">Create Your Account</h1>
+      <p class="mt-1.5 text-sm text-gray-400 max-w-sm">
+        Join Docura and take a smarter step toward better healthcare.
+      </p>
+
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" class="mt-5 space-y-3">
+        <!-- Full Name -->
+        <div>
+          <label for="fullName" class="block mb-1 text-xs font-medium text-primary-dark">Full Name</label>
+          <div class="relative">
+            <span class="absolute inset-y-0 start-0 flex items-center ps-3.5 text-gray-400 pointer-events-none">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                <circle cx="12" cy="8" r="4" />
+                <path d="M4 21c0-4 4-6 8-6s8 2 8 6" />
+              </svg>
+            </span>
+            <input
+              id="fullName"
+              type="text"
+              formControlName="fullName"
+              placeholder="e.g. Eleanor Vance"
+              class="w-full ps-10 pe-3 py-2.5 text-sm rounded-xl border bg-white text-gray-800 placeholder-gray-400
+                     focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary"
+              [class]="fullName.invalid && fullName.touched ? 'border-red-400' : 'border-gray-200'"
+            />
+          </div>
+          @if (fullName.invalid && fullName.touched) {
+            <p class="mt-1 text-xs text-red-500">
+              {{ fullName.hasError('required') ? 'Full name is required' : 'Minimum 3 characters' }}
+            </p>
+          }
+        </div>
+
+        <!-- Email -->
+        <div>
+          <label for="email" class="block mb-1 text-xs font-medium text-primary-dark">Email Address</label>
+          <div class="relative">
+            <span class="absolute inset-y-0 start-0 flex items-center ps-3.5 text-gray-400 pointer-events-none">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                <rect x="3" y="5" width="18" height="14" rx="2" />
+                <path d="m3 7 9 6 9-6" />
+              </svg>
+            </span>
+            <input
+              id="email"
+              type="email"
+              formControlName="email"
+              placeholder="eleanor@example.com"
+              class="w-full ps-10 pe-3 py-2.5 text-sm rounded-xl border bg-white text-gray-800 placeholder-gray-400
+                     focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary"
+              [class]="email.invalid && email.touched ? 'border-red-400' : 'border-gray-200'"
+            />
+          </div>
+          @if (email.invalid && email.touched) {
+            <p class="mt-1 text-xs text-red-500">
+              {{ email.hasError('required') ? 'Email is required' : 'Enter a valid email' }}
+            </p>
+          }
+        </div>
+
+        <!-- Phone + Country Code (Flowbite Dropdown) -->
+        <div>
+          <label for="phone" class="block mb-1 text-xs font-medium text-primary-dark">Phone Number</label>
+          <div class="relative">
+            <button
+              #countryBtn
+              type="button"
+              class="absolute inset-y-0 start-0 z-10 flex items-center gap-1.5 ps-3 pe-2 text-sm text-gray-600
+                     border-e border-gray-200 rounded-s-xl hover:bg-gray-50 transition-colors"
+              aria-label="Select country code"
+            >
+              <span class="text-base leading-none">{{ selectedCountry().flag }}</span>
+              <span class="text-xs font-medium">{{ selectedCountry().dialCode }}</span>
+              <svg class="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path d="m6 9 6 6 6-6" />
+              </svg>
+            </button>
+
+            <input
+              id="phone"
+              type="tel"
+              inputmode="numeric"
+              formControlName="phone"
+              placeholder="1012345678"
+              class="w-full ps-[6.25rem] pe-3 py-2.5 text-sm rounded-xl border bg-white text-gray-800 placeholder-gray-400
+                     focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary"
+              [class]="phone.invalid && phone.touched ? 'border-red-400' : 'border-gray-200'"
+            />
+
+            <div
+              #countryMenu
+              class="hidden z-30 w-64 bg-white border border-gray-200 rounded-xl shadow-lg"
+            >
+              <ul class="max-h-56 overflow-y-auto py-1 text-sm" role="listbox">
+                @for (c of countries; track c.code) {
+                  <li>
+                    <button
+                      type="button"
+                      role="option"
+                      [attr.aria-selected]="c.code === selectedCountry().code"
+                      (click)="selectCountry(c)"
+                      class="w-full flex items-center gap-2.5 px-3 py-2 text-start hover:bg-surface/60 transition-colors"
+                      [class]="c.code === selectedCountry().code ? 'bg-surface/50 font-semibold text-primary-dark' : 'text-gray-700'"
+                    >
+                      <span class="text-base leading-none">{{ c.flag }}</span>
+                      <span class="flex-1 truncate">{{ c.name }}</span>
+                      <span class="text-xs text-gray-400">{{ c.dialCode }}</span>
+                    </button>
+                  </li>
+                }
+              </ul>
+            </div>
+          </div>
+          @if (phone.invalid && phone.touched) {
+            <p class="mt-1 text-xs text-red-500">
+              {{ phone.hasError('required') ? 'Phone number is required' : 'Enter a valid phone number' }}
+            </p>
+          }
+        </div>
+
+        <!-- Gender (Male / Female) -->
+        <div>
+          <span class="block mb-1 text-xs font-medium text-primary-dark">Gender</span>
+          <div class="grid grid-cols-2 gap-1 p-1 rounded-xl bg-surface" role="radiogroup" aria-label="Gender">
+            @for (g of genders; track g.value) {
+              <button
+                type="button"
+                role="radio"
+                [attr.aria-checked]="gender.value === g.value"
+                (click)="setGender(g.value)"
+                class="py-1.5 rounded-lg text-xs transition-all"
+                [class]="gender.value === g.value
+                  ? 'bg-white text-primary-dark font-semibold shadow-sm'
+                  : 'text-gray-500 hover:text-primary-dark'"
+              >
+                {{ g.label }}
+              </button>
+            }
+          </div>
+        </div>
+
+        <!-- Password -->
+        <div>
+          <label for="password" class="block mb-1 text-xs font-medium text-primary-dark">Password</label>
+          <div class="relative">
+            <span class="absolute inset-y-0 start-0 flex items-center ps-3.5 text-gray-400 pointer-events-none">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                <rect x="4" y="11" width="16" height="10" rx="2" />
+                <path d="M8 11V8a4 4 0 0 1 8 0v3" />
+              </svg>
+            </span>
+            <input
+              id="password"
+              [type]="showPassword() ? 'text' : 'password'"
+              formControlName="password"
+              placeholder="••••••••••••"
+              class="w-full ps-10 pe-11 py-2.5 text-sm rounded-xl border bg-white text-gray-800 placeholder-gray-400
+                     focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary"
+              [class]="password.invalid && password.touched ? 'border-red-400' : 'border-gray-200'"
+            />
+            <button
+              type="button"
+              (click)="togglePassword()"
+              class="absolute inset-y-0 end-0 flex items-center pe-3.5 text-gray-400 hover:text-primary-dark"
+              [attr.aria-label]="showPassword() ? 'Hide password' : 'Show password'"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                @if (showPassword()) {
+                  <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z" />
+                  <circle cx="12" cy="12" r="3" />
+                } @else {
+                  <path d="M3 3l18 18M10.6 6.1A9.8 9.8 0 0 1 12 6c6.5 0 10 6 10 6a17 17 0 0 1-3.2 3.9M6.6 6.6A16.7 16.7 0 0 0 2 12s3.5 6 10 6a9.7 9.7 0 0 0 4-.9" />
+                }
+              </svg>
+            </button>
+          </div>
+          @if (password.invalid && password.touched) {
+            <p class="mt-1 text-xs text-red-500">
+              {{ password.hasError('required') ? 'Password is required' : 'Minimum 8 characters' }}
+            </p>
+          }
+        </div>
+
+        <!-- Confirm Password -->
+        <div>
+          <label for="confirmPassword" class="block mb-1 text-xs font-medium text-primary-dark">Confirm Password</label>
+          <div class="relative">
+            <span class="absolute inset-y-0 start-0 flex items-center ps-3.5 text-gray-400 pointer-events-none">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                <rect x="4" y="11" width="16" height="10" rx="2" />
+                <path d="M8 11V8a4 4 0 0 1 8 0v3" />
+              </svg>
+            </span>
+            <input
+              id="confirmPassword"
+              [type]="showConfirmPassword() ? 'text' : 'password'"
+              formControlName="confirmPassword"
+              placeholder="••••••••••••"
+              class="w-full ps-10 pe-11 py-2.5 text-sm rounded-xl border bg-white text-gray-800 placeholder-gray-400
+                     focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary"
+              [class]="(confirmPassword.invalid && confirmPassword.touched) || showMismatch ? 'border-red-400' : 'border-gray-200'"
+            />
+            <button
+              type="button"
+              (click)="toggleConfirmPassword()"
+              class="absolute inset-y-0 end-0 flex items-center pe-3.5 text-gray-400 hover:text-primary-dark"
+              [attr.aria-label]="showConfirmPassword() ? 'Hide password' : 'Show password'"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                @if (showConfirmPassword()) {
+                  <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z" />
+                  <circle cx="12" cy="12" r="3" />
+                } @else {
+                  <path d="M3 3l18 18M10.6 6.1A9.8 9.8 0 0 1 12 6c6.5 0 10 6 10 6a17 17 0 0 1-3.2 3.9M6.6 6.6A16.7 16.7 0 0 0 2 12s3.5 6 10 6a9.7 9.7 0 0 0 4-.9" />
+                }
+              </svg>
+            </button>
+          </div>
+          @if (confirmPassword.hasError('required') && confirmPassword.touched) {
+            <p class="mt-1 text-xs text-red-500">Please confirm your password</p>
+          } @else if (showMismatch) {
+            <p class="mt-1 text-xs text-red-500">Passwords do not match</p>
+          }
+        </div>
+
+        <!-- Submit -->
+        <button
+          type="submit"
+          class="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-primary hover:bg-primary-hover
+                 text-white text-sm font-semibold shadow-md shadow-primary/30 transition-colors
+                 focus:outline-none focus:ring-4 focus:ring-primary/30"
+        >
+          Create Account
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M5 12h14M13 6l6 6-6 6" />
+          </svg>
+        </button>
+      </form>
+
+      <!-- Divider -->
+      <div class="flex items-center gap-3 my-4">
+        <span class="flex-1 h-px bg-gray-200"></span>
+        <span class="text-[11px] text-gray-400 whitespace-nowrap">Or sign up with</span>
+        <span class="flex-1 h-px bg-gray-200"></span>
+      </div>
+
+      <!-- Social -->
+      <div class="grid grid-cols-1 min-[420px]:grid-cols-2 gap-3">
+        <button
+          type="button"
+          class="flex items-center justify-center gap-2 py-2 rounded-xl border border-gray-200 bg-white
+                 text-sm font-medium text-gray-800 hover:bg-gray-50 transition-colors"
+        >
+          <svg class="w-4 h-4" viewBox="0 0 24 24">
+            <path fill="#4285F4" d="M22.5 12.2c0-.8-.1-1.5-.2-2.2H12v4.3h5.9a5 5 0 0 1-2.2 3.3v2.7h3.5c2.1-1.9 3.3-4.7 3.3-8.1Z" />
+            <path fill="#34A853" d="M12 23c3 0 5.5-1 7.3-2.7l-3.5-2.7c-1 .7-2.2 1.1-3.8 1.1-2.9 0-5.4-2-6.3-4.6H2.1v2.8A11 11 0 0 0 12 23Z" />
+            <path fill="#FBBC05" d="M5.7 14.1a6.6 6.6 0 0 1 0-4.2V7.1H2.1a11 11 0 0 0 0 9.8l3.6-2.8Z" />
+            <path fill="#EA4335" d="M12 5.4c1.6 0 3.1.6 4.3 1.7l3.2-3.2A11 11 0 0 0 2.1 7.1l3.6 2.8C6.6 7.4 9.1 5.4 12 5.4Z" />
+          </svg>
+          Google
+        </button>
+        <button
+          type="button"
+          class="flex items-center justify-center gap-2 py-2 rounded-xl border border-gray-200 bg-white
+                 text-sm font-medium text-gray-800 hover:bg-gray-50 transition-colors"
+        >
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M16.4 12.6c0-2.3 1.9-3.4 2-3.5a4.3 4.3 0 0 0-3.4-1.8c-1.4-.1-2.8.9-3.5.9s-1.8-.8-3-.8a4.4 4.4 0 0 0-3.7 2.3c-1.6 2.8-.4 6.9 1.1 9.1.8 1.1 1.7 2.3 2.9 2.3s1.6-.7 3-.7 1.8.7 3 .7 2-1.1 2.8-2.2a9.6 9.6 0 0 0 1.3-2.6 4 4 0 0 1-2.5-3.7ZM14.1 5.8A4 4 0 0 0 15 3a4.1 4.1 0 0 0-2.7 1.4 3.8 3.8 0 0 0-1 2.7 3.4 3.4 0 0 0 2.8-1.3Z" />
+          </svg>
+          Apple
+        </button>
+      </div>
+
+      <p class="mt-4 text-center text-sm text-gray-400">
+        Already have an account?
+        <a routerLink="/login" class="font-semibold text-primary hover:underline">Log in</a>
+      </p>
+    </div>
+
+    <!-- ========== Image Side (من الـ lg وطالع) ========== -->
+    <div class="relative hidden lg:block rounded-2xl overflow-hidden min-h-[560px]">
+      <img
+        src="/signup.jpg"
+        alt="Medical team"
+        class="absolute inset-0 w-full h-full object-cover object-center"
+      />
+
+      <!-- Gradient overlay -->
+      <div
+        class="absolute inset-0"
+        style="background: linear-gradient(180deg,
+          rgb(0 105 109 / 0.35) 0%,
+          rgb(0 105 109 / 0.05) 35%,
+          rgb(0 71 79 / 0.55) 70%,
+          rgb(0 71 79 / 0.90) 100%);"
+      ></div>
+
+      <!-- Top badges -->
+      <div class="absolute top-4 inset-x-4 flex items-center justify-between gap-2">
+        <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/70 backdrop-blur text-[10px] font-semibold tracking-wide text-primary-dark">
+          <span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+          24/7 CLINICAL NETWORK
+        </span>
+        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/70 backdrop-blur text-[10px] font-semibold text-primary-dark whitespace-nowrap">
+          <svg class="w-3 h-3 text-amber-500" viewBox="0 0 24 24" fill="currentColor">
+            <path d="m12 2 3 6.9 7.5.6-5.7 4.9 1.7 7.3L12 17.8 5.5 21.7l1.7-7.3L1.5 9.5 9 8.9 12 2Z" />
+          </svg>
+          4.9/5 <span class="font-normal text-gray-500">(12k+ reviews)</span>
+        </span>
+      </div>
+
+      <!-- Response time badge -->
+      <div class="absolute top-[28%] end-6 flex items-center gap-2.5 px-3.5 py-2.5 rounded-2xl bg-white/80 backdrop-blur-md shadow-lg">
+        <span class="w-8 h-8 rounded-lg bg-primary-light flex items-center justify-center text-primary-dark">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M3 12h4l2-5 4 10 2-5h6" />
+          </svg>
+        </span>
+        <div>
+          <p class="text-[9px] font-medium tracking-wide text-gray-500">AVG. RESPONSE TIME</p>
+          <p class="text-sm font-bold text-primary-dark">&lt; 3 Minutes</p>
+        </div>
+      </div>
+
+      <!-- Bottom glass card -->
+      <div class="absolute bottom-3 inset-x-3 p-4 rounded-2xl bg-white/85 backdrop-blur-md shadow-lg">
+        <p class="flex items-center gap-2 text-[10px] font-semibold tracking-wide text-primary-dark">
+          <span class="w-5 h-5 rounded-full bg-primary-light flex items-center justify-center">
+            <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+              <path d="m5 12 5 5L20 7" />
+            </svg>
+          </span>
+          VERIFIED CLINICAL STANDARDS
+        </p>
+
+        <h2 class="mt-2 text-xl font-bold leading-tight text-primary-dark">
+          Your Health, Our Priority.
+        </h2>
+
+        <p class="mt-2 text-xs leading-relaxed text-gray-600">
+          Connecting you with world-class healthcare specialists, board-certified physicians, and personalized diagnostic care all in one unified ecosystem.
+        </p>
+
+        <div class="mt-4 flex items-center justify-between gap-2">
+          <div class="flex -space-x-2 shrink-0">
+            <span class="w-7 h-7 rounded-full bg-primary-light text-primary-dark text-[8px] font-bold flex items-center justify-center ring-2 ring-white">MD</span>
+            <span class="w-7 h-7 rounded-full bg-primary-light text-primary-dark text-[8px] font-bold flex items-center justify-center ring-2 ring-white">RN</span>
+            <span class="w-7 h-7 rounded-full bg-primary-light text-primary-dark text-[8px] font-bold flex items-center justify-center ring-2 ring-white">DC</span>
+            <span class="w-7 h-7 rounded-full bg-gray-200 text-gray-600 text-[8px] font-bold flex items-center justify-center ring-2 ring-white">+4k</span>
+          </div>
+          <a routerLink="/doctors" class="text-[11px] font-semibold text-primary-dark whitespace-nowrap hover:underline">
+            Licensed Practitioners ›
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>

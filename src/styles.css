@@ -1,3 +1,17 @@
 /* You can add global styles to this file, and also import other style files */
 
 @import "tailwindcss";
+@plugin "flowbite/plugin";
+@source "../node_modules/flowbite";
+@theme {
+  --color-primary: #62BBB7;
+  --color-primary-hover: #52A9A5;
+  --color-primary-dark: #0F5C63;   /* لون العناوين والنصوص الغامقة */
+  --color-primary-light: #A5F0EC;  /* لون الـ badges والـ fingerprint */
+  --color-surface: #D9E8E7;        /* لون الخلفية */
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+}
+
+body {
+  @apply bg-surface font-sans antialiased;
+}
